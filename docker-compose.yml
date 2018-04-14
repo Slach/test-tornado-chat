@@ -1,0 +1,40 @@
+version: '2.3'
+services:
+  # TODO need service discovery for nginx upstream ;)
+  nginx:
+    image: nginx:alpine
+    ports:
+      - "80:80"
+    volumes:
+      - /var/run/docker.sock:/tmp/docker.sock:ro
+      - ./deployment/nginx/conf.d/docker.test.tornado.chatserver.conf:/etc/nginx/conf.d/default.conf
+    depends_on:
+      - redis
+      - chatserver1
+      - chatserver2
+    links:
+      - redis
+      - chatserver1
+      - chatserver2
+  chatserver1:
+    extends:
+      file: chatserver-compose.yml
+      service: chatserver.base
+    volumes:
+      - ./apps/:/apps/
+    depends_on:
+      - redis
+    links:
+      - redis
+  chatserver2:
+    extends:
+      file: chatserver-compose.yml
+      service: chatserver.base
+    volumes:
+      - ./apps/:/apps/
+    depends_on:
+      - redis
+    links:
+      - redis
+  redis:
+    image: redis:alpine

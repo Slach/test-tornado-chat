@@ -1,0 +1,15 @@
+version: '2.3'
+services:
+  chatserver.base:
+    environment:
+      PYTHONUNBUFFERED: 1
+    build:
+      context: .
+      dockerfile: Dockerfile
+      labels:
+        version: "0.0.1"
+    entrypoint:
+      - /usr/local/bin/python3
+      - /apps/chat_server/main.py
+      - --redis_host=redis
+      - --debug
